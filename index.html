@@ -430,23 +430,10 @@
   </style>
 </head>
 <body>
-  <div class="access-screen" id="accessScreen">
-    <div class="access-box">
-      <div class="access-tag">Secure LACRIME Access</div>
-      <h1>Accès sécurisé</h1>
-      <p>Entrée dans un dossier classifié de la SAST. Saisis le mot de passe pour ouvrir l’interface complète.</p>
-      <input id="passwordInput" type="password" placeholder="Mot de passe" class="access-input" />
-      <div class="access-actions">
-        <button id="loginBtn" class="access-btn">Accéder</button>
-        <span id="accessMsg" class="access-msg">Mot de passe par défaut : <strong>LACRIME</strong></span>
-      </div>
-    </div>
-  </div>
-
-  <main class="container" id="mainApp" style="display:none;">
+  <main class="container">
     <div class="notif-stack" id="notifStack"></div>
     <header class="topbar">
-      <div class="brand">LACRIME • unité spécialisée SAST</div>
+      <div class="brand">LACRIME • unité spécialisée SAST • dossier classifié</div>
       <nav class="nav">
         <a href="#presentation">Présentation</a>
         <a href="#missions">Missions</a>
@@ -460,6 +447,9 @@
       <aside class="sidebar reveal">
         <div class="sys-title">Modules LACRIME</div>
         <div class="sys-list">
+          <div class="sys-item" data-jump="#unitMembers">Membres</div>
+          <div class="sys-item" data-jump="#ranksSection">Rangs</div>
+          <div class="sys-item" data-jump="#suspectsDb">Base suspects</div>
           <div class="sys-item active" data-jump="#presentation">Présentation</div>
           <div class="sys-item" data-jump="#missions">Missions</div>
           <div class="sys-item" data-jump="#objectifs">Objectifs</div>
@@ -676,6 +666,57 @@
       </div>
     </section>
 
+    <section class="layout reveal visible" id="unitMembers">
+      <article class="card reveal visible">
+        <h2 class="section-title">Membres de l’unité</h2>
+        <div class="recruit-grid">
+          <div class="recruit-card"><span class="status-pill">Membre 01</span><h3>Commandement</h3><p>Dirige l’unité, valide les opérations et décide des priorités de terrain.</p></div>
+          <div class="recruit-card"><span class="status-pill">Membre 02</span><h3>Référent renseignement</h3><p>Centralise les infos, les dossiers et les mouvements des groupes suivis.</p></div>
+          <div class="recruit-card"><span class="status-pill">Membre 03</span><h3>Equipe banalisée</h3><p>Observe, suit, confirme et prépare l’intervention sans rendre l’unité visible.</p></div>
+        </div>
+      </article>
+
+      <article class="card reveal visible" id="ranksSection">
+        <h2 class="section-title">Rangs LACRIME</h2>
+        <div class="timeline">
+          <div class="timeline-item"><h3>Commandant d’unité</h3><p>Responsable global de la doctrine, des opérations et de la validation finale.</p></div>
+          <div class="timeline-item"><h3>Chef d’équipe terrain</h3><p>Encadre les missions banalisées et coordonne les phases d’approche.</p></div>
+          <div class="timeline-item"><h3>Agent renseignement</h3><p>Construit les dossiers, suit les groupes, trie et recoupe les informations.</p></div>
+          <div class="timeline-item"><h3>Agent d’intervention banalisé</h3><p>Présence civile, surveillance discrète, appui et action ciblée.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card reveal visible" id="suspectsDb">
+      <h2 class="section-title">Base de données suspects</h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="sus1">Suspect 01</button>
+        <button class="tab" data-tab="sus2">Suspect 02</button>
+        <button class="tab" data-tab="sus3">Suspect 03</button>
+      </div>
+
+      <div class="tab-content active" id="sus1">
+        <div class="report-item"><strong>Alias :</strong> Ghostline</div>
+        <div class="report-item"><strong>Zone :</strong> Secteur sud / bloc sensible</div>
+        <div class="report-item"><strong>Niveau de risque :</strong> Élevé</div>
+        <div class="report-item"><strong>Observations :</strong> Présence régulière sur point chaud, liens probables avec activité de rue organisée, comportement prudent.</div>
+      </div>
+
+      <div class="tab-content" id="sus2">
+        <div class="report-item"><strong>Alias :</strong> Viper</div>
+        <div class="report-item"><strong>Zone :</strong> Axe central / mobilité élevée</div>
+        <div class="report-item"><strong>Niveau de risque :</strong> Moyen</div>
+        <div class="report-item"><strong>Observations :</strong> Sert d’intermédiaire, fréquente plusieurs secteurs, probable lien entre groupes locaux.</div>
+      </div>
+
+      <div class="tab-content" id="sus3">
+        <div class="report-item"><strong>Alias :</strong> Santo</div>
+        <div class="report-item"><strong>Zone :</strong> Ouest / zone résidentielle</div>
+        <div class="report-item"><strong>Niveau de risque :</strong> Surveillance</div>
+        <div class="report-item"><strong>Observations :</strong> Profil discret, peu visible, soupçonné d’organiser sans s’exposer directement.</div>
+      </div>
+    </section>
+
     <section class="card reveal visible">
       <h2 class="section-title">Pourquoi créer LACRIME ?</h2>
       <p>
@@ -689,6 +730,8 @@
   </main>
 
   <script>
+    
+
     const reveals = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -713,8 +756,9 @@
 
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        const parent = tab.parentElement.parentElement;
+        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab).classList.add('active');
       });
@@ -753,16 +797,14 @@
       pushNotif(pick[0], pick[1]);
     });
 
-    setTimeout(() => pushNotif('LACRIME Online', 'Interface V2 activée avec succès.'), 1200);
-    setTimeout(() => pushNotif('Secure Access', 'Modules gangs et banalisés chargés.'), 2800);
-
     const consoleLines = document.getElementById('consoleLines');
     const liveFeed = [
       '[TRACE] undercover vehicle registry available...',
       '[INFO] urban gang monitoring active...',
       '[SYNC] field intelligence updated...',
       '[CHECK] recruitment standards confirmed...',
-      '[STATUS] lacrime response capability stable...'
+      '[STATUS] lacrime response capability stable...',
+      '[SECURE] suspect database encrypted and available...'
     ];
     let liveIndex = 0;
     setInterval(() => {
