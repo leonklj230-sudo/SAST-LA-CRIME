@@ -46,6 +46,75 @@
       background-size: 36px 36px;
     }
 
+    .access-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at center, rgba(99,199,255,.08), transparent 30%), linear-gradient(180deg, #030814, #07111e);
+    }
+
+    .access-box {
+      width: min(92vw, 520px);
+      background: rgba(7, 15, 28, .95);
+      border: 1px solid rgba(99,199,255,.22);
+      border-radius: 26px;
+      padding: 28px;
+      box-shadow: var(--shadow), var(--glow);
+      text-align: center;
+    }
+
+    .access-tag {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      border: 1px solid rgba(99,199,255,.22);
+      background: rgba(99,199,255,.08);
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .access-input {
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .access-actions {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .access-btn {
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(99,199,255,.28);
+      background: rgba(99,199,255,.10);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .access-msg {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .notif-stack {
       position: fixed;
       top: 18px;
@@ -361,7 +430,20 @@
   </style>
 </head>
 <body>
-  <main class="container">
+  <div class="access-screen" id="accessScreen">
+    <div class="access-box">
+      <div class="access-tag">Secure LACRIME Access</div>
+      <h1>Accès sécurisé</h1>
+      <p>Entrée dans un dossier classifié de la SAST. Saisis le mot de passe pour ouvrir l’interface complète.</p>
+      <input id="passwordInput" type="password" placeholder="Mot de passe" class="access-input" />
+      <div class="access-actions">
+        <button id="loginBtn" class="access-btn">Accéder</button>
+        <span id="accessMsg" class="access-msg">Mot de passe par défaut : <strong>LACRIME</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <main class="container" id="mainApp" style="display:none;">
     <div class="notif-stack" id="notifStack"></div>
     <header class="topbar">
       <div class="brand">LACRIME • unité spécialisée SAST</div>
@@ -698,3 +780,4 @@
   </script>
 </body>
 </html>
+
