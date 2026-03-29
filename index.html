@@ -268,4 +268,457 @@
 
     .console-lines {
       font-family: Consolas, Monaco, monospace;
-      font-size:
+      font-size: 13px;
+      line-height: 1.8;
+      color: #dff9ff;
+      min-height: 90px;
+      white-space: pre-line;
+    }
+
+    .software-nav {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .soft-btn {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .map-shell {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      min-height: 520px;
+      background: #09111d;
+      box-shadow: var(--glow);
+    }
+
+    .map-shell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .map-point {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      transition: transform .15s ease;
+    }
+
+    .map-point:hover { transform: scale(1.12); }
+    .map-point.blue { background: var(--blue); box-shadow: 0 0 18px rgba(103,200,255,.7); }
+    .map-point.gold { background: var(--gold); box-shadow: 0 0 18px rgba(255,211,110,.7); }
+    .map-point.red { background: var(--danger); box-shadow: 0 0 18px rgba(255,107,121,.7); }
+    .map-point.cyan { background: var(--cyan); box-shadow: 0 0 18px rgba(126,247,230,.7); }
+
+    .map-info {
+      margin-top: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .stat-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 12px;
+      background: rgba(255,255,255,.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--gold));
+      border-radius: inherit;
+      transition: width 1.4s ease;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 900;
+      background: rgba(255,211,110,.16);
+      color: var(--gold);
+      border: 1px solid rgba(255,211,110,.16);
+      margin-bottom: 10px;
+    }
+
+    .report-item strong,
+    .feature-item strong {
+      color: var(--blue);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 6px 0 10px;
+    }
+
+    .reveal { opacity: 1; transform: none; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 1100px) {
+      .hero,
+      .layout,
+      .stats-grid,
+      .objective-grid,
+      .feature-grid,
+      .report-grid,
+      .software-nav {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 780px) {
+      .topbar,
+      .hero,
+      .layout,
+      .headline-stats,
+      .mini-grid,
+      .stats-grid,
+      .objective-grid,
+      .feature-grid,
+      .report-grid,
+      .software-nav {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .topbar { position: static; }
+      .subtitle { max-width: 100%; }
+      .nav { justify-content: flex-start; }
+      .title { font-size: 44px; }
+      .map-shell { min-height: 380px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="notif-stack" id="notifStack"></div>
+
+    <header class="topbar">
+      <div class="brand">LACRIME • unité spécialisée SAST • dossier classifié</div>
+      <nav class="nav">
+        <a href="#presentation">Présentation</a>
+        <a href="#missions">Missions</a>
+        <a href="#objectifs">Objectifs</a>
+        <a href="#mapSection">Carte GTA</a>
+        <button id="alertBtn">Alerte</button>
+      </nav>
+    </header>
+
+    <section class="hero" id="presentation">
+      <article class="card reveal visible">
+        <div class="tag">Projet d’unité spécialisée</div>
+        <h1 class="title">L.A.C.R.I.M.E</h1>
+        <p class="subtitle">
+          LACRIME est une unité spécialisée de la SAST conçue pour agir dans les zones à forte activité criminelle,
+          avec une approche basée sur les gangs, la surveillance discrète, les véhicules banalisés, le renseignement terrain
+          et les interventions ciblées. L’objectif est simple : être plus précis, plus intelligent et plus crédible qu’une réponse classique.
+        </p>
+        <div class="headline-stats">
+          <div class="mini"><div class="label">Statut</div><div class="value">Projet actif</div></div>
+          <div class="mini"><div class="label">Structure</div><div class="value">Branche SAST</div></div>
+          <div class="mini"><div class="label">Spécialité</div><div class="value">Gangs / civil</div></div>
+          <div class="mini"><div class="label">Approche</div><div class="value">Renseignement + action</div></div>
+        </div>
+      </article>
+
+      <article class="card reveal visible">
+        <div class="console">
+          <div class="console-head"><span>System console</span><span>Live feed</span></div>
+          <div class="console-lines" id="consoleLines">[BOOT] lacrime_system initialized...
+[CHECK] encrypted field dossier loaded...
+[INFO] undercover branch available...
+[TRACE] gang surveillance protocols ready...
+[READY] operator access confirmed...</div>
+        </div>
+
+        <h2 class="section-title">Interface d’unité</h2>
+        <div class="tabs">
+          <button class="tab active" data-tab="tab1">Résumé</button>
+          <button class="tab" data-tab="tab2">Banalisés</button>
+          <button class="tab" data-tab="tab3">Gang Unit</button>
+        </div>
+
+        <div class="tab-content active" id="tab1">
+          <div class="mini-grid">
+            <div class="soft-panel"><div class="label">Mission principale</div><div class="value">Lutter contre la criminalité de rue organisée</div></div>
+            <div class="soft-panel"><div class="label">Type d’agents</div><div class="value">Discrets, calmes, stratégiques</div></div>
+            <div class="soft-panel"><div class="label">Méthode</div><div class="value">Infiltration, observation, intervention</div></div>
+            <div class="soft-panel"><div class="label">Véhicules</div><div class="value">Banalisés</div></div>
+          </div>
+          <div class="soft-panel" style="margin-top:14px;">
+            <div class="label">Phrase d’unité</div>
+            <div class="value">Voir sans être vu. Comprendre avant d’agir.</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab2">
+          <div class="soft-panel">
+            <div class="label">Mission banalisée</div>
+            <p>Les équipes banalisées assurent une présence crédible et invisible dans les secteurs sensibles. Elles observent, suivent, identifient, confirment, puis transmettent ou déclenchent une action ciblée au bon moment.</p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab3">
+          <div class="soft-panel">
+            <div class="label">Branche gangs</div>
+            <p>LACRIME constitue la partie de la SAST spécialisée dans la lecture des blocs, le suivi des alliances, la surveillance des points chauds et la création de dossiers cohérents sur les groupes les plus actifs.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="software-nav reveal visible">
+      <button class="soft-btn active" data-jump="#missions">Missions</button>
+      <button class="soft-btn" data-jump="#objectifs">Objectifs</button>
+      <button class="soft-btn" data-jump="#reports">Rapports</button>
+      <button class="soft-btn" data-jump="#garage">Banalisés</button>
+      <button class="soft-btn" data-jump="#mapSection">Carte GTA</button>
+      <button class="soft-btn" data-jump="#whySection">Vision</button>
+    </section>
+
+    <section class="layout" id="missions">
+      <article class="card reveal visible">
+        <h2 class="section-title">Fonctionnement de l’unité</h2>
+        <div class="feature-grid">
+          <div class="feature-item"><strong>Surveillance</strong>Observation continue des comportements, lecture des mouvements et constitution de dossiers utiles.</div>
+          <div class="feature-item"><strong>Renseignement terrain</strong>Collecte et recoupement d’informations sur les secteurs, les dynamiques locales et les groupes suivis.</div>
+          <div class="feature-item"><strong>Infiltration</strong>Présence en civil dans des zones sensibles avec une posture crédible et discrète.</div>
+        </div>
+      </article>
+
+      <article class="card reveal visible">
+        <h2 class="section-title">Stats d’unité</h2>
+        <div class="stats-grid" id="statsSection">
+          <div class="stat-card">
+            <div class="stat-head"><span>Discrétion</span><strong>94%</strong></div>
+            <div class="bar"><div class="fill" data-width="94%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-head"><span>Observation</span><strong>91%</strong></div>
+            <div class="bar"><div class="fill" data-width="91%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-head"><span>Réactivité</span><strong>86%</strong></div>
+            <div class="bar"><div class="fill" data-width="86%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-head"><span>Coordination</span><strong>88%</strong></div>
+            <div class="bar"><div class="fill" data-width="88%"></div></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card reveal visible" id="mapSection">
+      <h2 class="section-title">Carte GTA interactive</h2>
+      <div class="map-shell">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/GTA_V_map.svg/1200px-GTA_V_map.svg.png" alt="Carte GTA V">
+        <button class="map-point blue" style="left:31%; top:63%;" data-title="Grove Street" data-text="Zone sensible avec activité de rue régulière. Surveillance discrète recommandée."></button>
+        <button class="map-point gold" style="left:38%; top:58%;" data-title="Davis" data-text="Secteur sous tension avec passages fréquents et besoin de présence banalisée."></button>
+        <button class="map-point red" style="left:42%; top:61%;" data-title="Rancho" data-text="Zone intéressante pour infiltration, repérage des habitudes et lecture du terrain."></button>
+        <button class="map-point cyan" style="left:46%; top:49%;" data-title="Mission Row" data-text="Centre logistique et point d’appui pour coordination opérationnelle."></button>
+      </div>
+      <div id="mapInfo" class="map-info"><strong>Carte active</strong><br>Clique sur un point de la carte pour afficher les informations RP de la zone.</div>
+    </section>
+
+    <section class="layout" id="objectifs">
+      <article class="card reveal visible">
+        <h2 class="section-title">Objectifs à court / moyen / long terme</h2>
+        <div class="objective-grid">
+          <div class="objective-card">
+            <div class="badge">Court terme</div>
+            <p>Créer officiellement l’unité, sélectionner les premiers agents, lancer les premiers suivis banalisés et structurer les méthodes de travail.</p>
+          </div>
+          <div class="objective-card">
+            <div class="badge">Moyen terme</div>
+            <p>Développer un réseau de renseignement terrain, identifier les groupes majeurs et créer une coordination solide avec les autres unités.</p>
+          </div>
+          <div class="objective-card">
+            <div class="badge">Long terme</div>
+            <p>Réduire durablement l’activité des gangs sur les points sensibles et faire de LACRIME une vraie référence en intervention ciblée.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="card reveal visible" id="garage">
+        <h2 class="section-title">Véhicules banalisés</h2>
+        <div class="report-grid">
+          <div class="report-item"><strong>SUV discret</strong>Présence mobile sur zones chaudes, suivi longue durée, observation calme.</div>
+          <div class="report-item"><strong>Berline civile</strong>Intégration urbaine crédible, déplacements propres et repérage sans visibilité excessive.</div>
+          <div class="report-item"><strong>Véhicule d’appui</strong>Extraction rapide, soutien lors d’une opération ciblée, coordination terrain.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="layout" id="reports">
+      <article class="card reveal visible">
+        <h2 class="section-title">Rapports opérationnels</h2>
+        <div class="report-grid">
+          <div class="report-item"><strong>Observation bloc sud</strong>Présence répétée d’individus affiliés à des groupes locaux. Activité stable. Surveillance prolongée recommandée.</div>
+          <div class="report-item"><strong>Point de deal sous suivi</strong>Rotation fréquente, profils jeunes, zone sensible. Lecture terrain nécessaire avant toute action visible.</div>
+          <div class="report-item"><strong>Coordination inter-unités</strong>Besoin d’un lien plus direct entre renseignement discret et intervention rapide.</div>
+        </div>
+      </article>
+
+      <article class="card reveal visible" id="whySection">
+        <h2 class="section-title">Pourquoi créer LACRIME ?</h2>
+        <p class="subtitle" style="max-width:100%; margin-bottom:0;">
+          Les gangs ne se combattent pas uniquement avec des interventions visibles. Une partie du travail passe par l’anticipation,
+          l’observation et une compréhension réelle du terrain. LACRIME existe pour combler cet espace : agir plus tôt, frapper plus juste,
+          et donner à la SAST une unité capable d’être crédible dans les environnements les plus sensibles.
+        </p>
+      </article>
+    </section>
+
+    <div class="footer">Version visuelle refaite • interface propre • cards premium • navigation moderne • map GTA intégrée</div>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const parent = tab.parentElement.parentElement;
+        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.soft-btn').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.soft-btn').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        const target = document.querySelector(item.dataset.jump);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    document.querySelectorAll('.map-point').forEach(point => {
+      point.addEventListener('click', () => {
+        document.getElementById('mapInfo').innerHTML = '<strong>' + point.dataset.title + '</strong><br>' + point.dataset.text;
+      });
+    });
+
+    const notifStack = document.getElementById('notifStack');
+    function pushNotif(title, text) {
+      const el = document.createElement('div');
+      el.className = 'notif';
+      el.innerHTML = '<div class="notif-title">' + title + '</div><div class="notif-text">' + text + '</div>';
+      notifStack.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      setTimeout(() => {
+        el.classList.remove('show');
+        setTimeout(() => el.remove(), 350);
+      }, 3200);
+    }
+
+    document.getElementById('alertBtn').addEventListener('click', () => {
+      pushNotif('Alerte rouge', 'Intervention en cours sur secteur surveillé.');
+    });
+
+    const consoleLines = document.getElementById('consoleLines');
+    const liveFeed = [
+      '[TRACE] undercover vehicle registry available...',
+      '[INFO] urban gang monitoring active...',
+      '[SYNC] field intelligence updated...',
+      '[CHECK] recruitment standards confirmed...',
+      '[STATUS] lacrime response capability stable...'
+    ];
+    let liveIndex = 0;
+    setInterval(() => {
+      const line = liveFeed[liveIndex % liveFeed.length];
+      consoleLines.textContent += '\n' + line;
+      const parts = consoleLines.textContent.split('\n');
+      if (parts.length > 7) {
+        consoleLines.textContent = parts.slice(parts.length - 7).join('\n');
+      }
+      liveIndex++;
+    }, 2600);
+
+    const statsSection = document.getElementById('statsSection');
+    let statsDone = false;
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !statsDone) {
+          statsDone = true;
+          document.querySelectorAll('.fill').forEach(fill => {
+            fill.style.width = fill.dataset.width;
+          });
+        }
+      });
+    }, { threshold: 0.25 });
+    statsObserver.observe(statsSection);
+  </script>
+</body>
+</html>
