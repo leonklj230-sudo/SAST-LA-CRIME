@@ -444,19 +444,7 @@
     </header>
 
     <section class="system-shell" style="margin-top: 22px;">
-      <aside class="sidebar reveal">
-        <div class="sys-title">Modules LACRIME</div>
-        <div class="sys-list">
-          
-          <div class="sys-item active" data-jump="#presentation">Présentation</div>
-          <div class="sys-item" data-jump="#missions">Missions</div>
-          <div class="sys-item" data-jump="#objectifs">Objectifs</div>
-          <div class="sys-item" data-jump="#profils">Profils</div>
-          <div class="sys-item" data-jump="#garage">Véhicules banalisés</div>
-          <div class="sys-item" data-jump="#reports">Rapports</div>
-          <div class="sys-item" data-jump="#recrutement">Recrutement</div>
-        </div>
-      </aside>
+      
 
       <div>
         <div class="console reveal">
@@ -817,8 +805,30 @@
       }
       liveIndex++;
     }, 2400);
+  // AUDIO PLAYER V3
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    if(musicBtn && music){
+      musicBtn.addEventListener('click',()=>{
+        if(music.paused){ music.play(); musicBtn.textContent='Musique : ON'; }
+        else{ music.pause(); musicBtn.textContent='Musique : OFF'; }
+      });
+    }
+
+    // ALERT SYSTEM
+    const alertBtn = document.getElementById('alertBtn');
+    if(alertBtn){
+      alertBtn.addEventListener('click',()=>{
+        document.body.style.background='linear-gradient(180deg,#200,#000)';
+        pushNotif('ALERTE ROUGE','INTERVENTION EN COURS');
+      });
+    }
+
+    // FAKE DOSSIERS
+    function openDossier(){
+      pushNotif('DOSSIER','Ouverture des fichiers classifiés...');
+    }
+
   </script>
 </body>
 </html>
-
-
