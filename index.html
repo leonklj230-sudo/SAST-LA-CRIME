@@ -668,8 +668,7 @@
         <a href="#objectifs">Objectifs</a>
         <a href="#operations">Opérations</a>
         <a href="#structure">Structure</a>
-        <a href="#github">GitHub</a>
-        <a href="#contact" class="cta">Rejoindre le projet</a>
+        <a href="#map" class="cta">Voir la carte</a>
       </nav>
     </div>
   </header>
@@ -998,7 +997,42 @@
     </section>
 
     
-  </main>
+      <section id="map">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Carte des zones sous surveillance</h2>
+            <p>Version V2 avec une carte interactive style centre de commandement. Clique sur un point pour afficher rapidement l’activité dominante de la zone et le niveau de pression exercé par LACRIME.</p>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+          <article class="contact-card reveal" style="position:relative; min-height: 480px; overflow:hidden;">
+            <div style="position:absolute; inset:18px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:
+              radial-gradient(circle at 20% 30%, rgba(110,168,255,0.18), transparent 18%),
+              radial-gradient(circle at 72% 22%, rgba(140,240,255,0.12), transparent 16%),
+              radial-gradient(circle at 63% 72%, rgba(125,242,176,0.12), transparent 16%),
+              linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+              overflow:hidden;">
+
+              <div style="position:absolute; inset:0; background-image:
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+                background-size: 42px 42px;"></div>
+
+              <div style="position:absolute; left:12%; top:20%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">FORUM DRIVE</div>
+              <div style="position:absolute; left:58%; top:16%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">RANCHO</div>
+              <div style="position:absolute; left:24%; top:64%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">STRAWBERRY</div>
+              <div style="position:absolute; left:70%; top:68%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">DAVIS</div>
+
+              <button class="map-point" data-zone="Forum Drive" data-risk="Élevé" data-activity="Surveillance de membres actifs, mouvements de véhicules et regroupements nocturnes." data-pressure="Pression continue" style="left:18%; top:28%;"></button>
+              <button class="map-point" data-zone="Rancho" data-risk="Moyen" data-activity="Flux suspects, échanges courts et circulation d’intermédiaires." data-pressure="Observation renforcée" style="left:66%; top:24%;"></button>
+              <button class="map-point" data-zone="Strawberry" data-risk="Élevé" data-activity="Points de contact multiples, activité de rue et présences mobiles." data-pressure="Filatures en cours" style="left:33%; top:72%;"></button>
+              <button class="map-point" data-zone="Davis" data-risk="Critique" data-activity="Présence structurée, influence territoriale et risque d’intervention rapide." data-pressure="Intervention préparée" style="left:77%; top:74%;"></button>
+            </div>
+          </article>
+
+          <article class="contact-card reveal" id="mapInfoCard">
 
   <footer>
     <div class="container footer-wrap">
@@ -1090,3 +1124,4 @@
   </script>
 </body>
 </html>
+
