@@ -564,6 +564,157 @@
       gap: 12px;
     }
 
+    .tactical-map-card {
+      min-height: 500px;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .tactical-map {
+      position: relative;
+      min-height: 465px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.09);
+      background:
+        radial-gradient(circle at 20% 28%, rgba(110,168,255,0.22), transparent 16%),
+        radial-gradient(circle at 74% 24%, rgba(140,240,255,0.18), transparent 14%),
+        radial-gradient(circle at 63% 72%, rgba(125,242,176,0.16), transparent 13%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+
+    .map-road {
+      position: absolute;
+      background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.04));
+      box-shadow: 0 0 20px rgba(255,255,255,0.06);
+    }
+
+    .road-h {
+      left: 8%;
+      right: 10%;
+      top: 48%;
+      height: 5px;
+    }
+
+    .road-v {
+      top: 12%;
+      bottom: 10%;
+      left: 52%;
+      width: 5px;
+    }
+
+    .road-d1 {
+      width: 46%;
+      height: 4px;
+      left: 13%;
+      top: 30%;
+      transform: rotate(24deg);
+      transform-origin: left center;
+    }
+
+    .road-d2 {
+      width: 34%;
+      height: 4px;
+      right: 12%;
+      bottom: 21%;
+      transform: rotate(-28deg);
+      transform-origin: right center;
+    }
+
+    .zone-label {
+      position: absolute;
+      color: #d9e3f4;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 18px rgba(0,0,0,0.4);
+    }
+
+    .zone-forum { left: 12%; top: 18%; }
+    .zone-rancho { right: 24%; top: 14%; }
+    .zone-strawberry { left: 24%; bottom: 24%; }
+    .zone-davis { right: 20%; bottom: 20%; }
+
+    .map-point {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.85);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 0 rgba(110,168,255,0.5);
+      cursor: pointer;
+      transition: 0.25s ease;
+      animation: pulsePoint 1.8s infinite;
+      z-index: 2;
+    }
+
+    .map-point::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .point-forum { left: 24%; top: 30%; }
+    .point-rancho { left: 69%; top: 27%; }
+    .point-strawberry { left: 34%; top: 68%; }
+    .point-davis { left: 76%; top: 71%; }
+
+    .map-point:hover {
+      transform: scale(1.15);
+    }
+
+    .intel-panel {
+      min-height: 500px;
+    }
+
+    .intel-top {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .intel-chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .intel-chip-live {
+      color: var(--success);
+      border-color: rgba(125,242,176,0.22);
+      background: rgba(125,242,176,0.08);
+    }
+
+    .intel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    @keyframes pulsePoint {
+      0% { box-shadow: 0 0 0 0 rgba(110,168,255,0.55); }
+      70% { box-shadow: 0 0 0 14px rgba(110,168,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(110,168,255,0); }
+    }
+
     .toast {
       position: fixed;
       right: 18px;
@@ -1002,37 +1153,80 @@
         <div class="section-head reveal">
           <div>
             <h2>Carte des zones sous surveillance</h2>
-            <p>Version V2 avec une carte interactive style centre de commandement. Clique sur un point pour afficher rapidement l’activité dominante de la zone et le niveau de pression exercé par LACRIME.</p>
+            <p>Version V2 revue avec une vraie interface tactique : carte plus lisible, points visibles, panneau de renseignement propre et style centre de commandement.</p>
           </div>
         </div>
 
         <div class="contact-grid">
-          <article class="contact-card reveal" style="position:relative; min-height: 480px; overflow:hidden;">
-            <div style="position:absolute; inset:18px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:
-              radial-gradient(circle at 20% 30%, rgba(110,168,255,0.18), transparent 18%),
-              radial-gradient(circle at 72% 22%, rgba(140,240,255,0.12), transparent 16%),
-              radial-gradient(circle at 63% 72%, rgba(125,242,176,0.12), transparent 16%),
-              linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-              overflow:hidden;">
+          <article class="contact-card reveal tactical-map-card">
+            <div class="tactical-map">
+              <div class="map-overlay"></div>
+              <div class="map-road road-h"></div>
+              <div class="map-road road-v"></div>
+              <div class="map-road road-d1"></div>
+              <div class="map-road road-d2"></div>
 
-              <div style="position:absolute; inset:0; background-image:
-                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-                background-size: 42px 42px;"></div>
+              <div class="zone-label zone-forum">FORUM DRIVE</div>
+              <div class="zone-label zone-rancho">RANCHO</div>
+              <div class="zone-label zone-strawberry">STRAWBERRY</div>
+              <div class="zone-label zone-davis">DAVIS</div>
 
-              <div style="position:absolute; left:12%; top:20%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">FORUM DRIVE</div>
-              <div style="position:absolute; left:58%; top:16%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">RANCHO</div>
-              <div style="position:absolute; left:24%; top:64%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">STRAWBERRY</div>
-              <div style="position:absolute; left:70%; top:68%; color:var(--muted); font-size:0.82rem; letter-spacing:0.04em;">DAVIS</div>
-
-              <button class="map-point" data-zone="Forum Drive" data-risk="Élevé" data-activity="Surveillance de membres actifs, mouvements de véhicules et regroupements nocturnes." data-pressure="Pression continue" style="left:18%; top:28%;"></button>
-              <button class="map-point" data-zone="Rancho" data-risk="Moyen" data-activity="Flux suspects, échanges courts et circulation d’intermédiaires." data-pressure="Observation renforcée" style="left:66%; top:24%;"></button>
-              <button class="map-point" data-zone="Strawberry" data-risk="Élevé" data-activity="Points de contact multiples, activité de rue et présences mobiles." data-pressure="Filatures en cours" style="left:33%; top:72%;"></button>
-              <button class="map-point" data-zone="Davis" data-risk="Critique" data-activity="Présence structurée, influence territoriale et risque d’intervention rapide." data-pressure="Intervention préparée" style="left:77%; top:74%;"></button>
+              <button class="map-point point-forum" data-zone="Forum Drive" data-risk="Élevé" data-activity="Surveillance de regroupements, repérage des véhicules relais et observation des mouvements en soirée." data-pressure="Pression continue" data-status="Zone suivie en discret"></button>
+              <button class="map-point point-rancho" data-zone="Rancho" data-risk="Moyen" data-activity="Échanges rapides, circulation d’intermédiaires et présence irrégulière sur plusieurs axes." data-pressure="Observation renforcée" data-status="Analyse en cours"></button>
+              <button class="map-point point-strawberry" data-zone="Strawberry" data-risk="Élevé" data-activity="Flux terrain dense, activité de rue visible et déplacements suspects entre plusieurs points." data-pressure="Filatures en cours" data-status="Renseignement prioritaire"></button>
+              <button class="map-point point-davis" data-zone="Davis" data-risk="Critique" data-activity="Implantation structurée, pression territoriale forte et risque élevé de réaction rapide." data-pressure="Intervention préparée" data-status="Zone à haute tension"></button>
             </div>
           </article>
 
-          <article class="contact-card reveal" id="mapInfoCard">
+          <article class="contact-card reveal intel-panel" id="mapInfoCard">
+            <div class="intel-top">
+              <span class="intel-chip">INTEL PANEL</span>
+              <span class="intel-chip intel-chip-live">LIVE</span>
+            </div>
+
+            <h3 id="mapZone">Forum Drive</h3>
+            <p id="mapActivity">Surveillance de regroupements, repérage des véhicules relais et observation des mouvements en soirée.</p>
+
+            <div class="intel-grid">
+              <div class="dash-box">
+                <h4>Niveau de risque</h4>
+                <p id="mapRisk">Élevé</p>
+              </div>
+              <div class="dash-box">
+                <h4>Pression LACRIME</h4>
+                <p id="mapPressure">Pression continue</p>
+              </div>
+              <div class="dash-box" style="grid-column:1 / -1;">
+                <h4>Statut</h4>
+                <p id="mapStatus">Zone suivie en discret</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="terminal">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Terminal LACRIME</h2>
+            <p>Bloc visuel style console tactique. Il donne un effet très GTA / unité spéciale avec génération automatique de logs de suivi.</p>
+          </div>
+        </div>
+
+        <article class="contact-card reveal" style="padding:0; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:8px; padding:14px 18px; border-bottom:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03);">
+            <span style="width:12px; height:12px; border-radius:50%; background:#ff8686; display:inline-block;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; background:#ffd27a; display:inline-block;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; background:#7df2b0; display:inline-block;"></span>
+            <strong style="margin-left:10px;">lacrime_terminal.exe</strong>
+          </div>
+          <div id="terminalScreen" style="min-height:320px; padding:22px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#b9ffd4; line-height:1.8; white-space:pre-wrap;"></div>
+        </article>
+      </div>
+    </section>
+  </main>
 
   <footer>
     <div class="container footer-wrap">
@@ -1112,15 +1306,59 @@
       });
     });
 
-    const form = document.getElementById('joinForm');
-    const toast = document.getElementById('toast');
+        const mapZone = document.getElementById('mapZone');
+    const mapActivity = document.getElementById('mapActivity');
+    const mapRisk = document.getElementById('mapRisk');
+    const mapPressure = document.getElementById('mapPressure');
+    const mapStatus = document.getElementById('mapStatus');
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      toast.classList.add('show');
-      form.reset();
-      setTimeout(() => toast.classList.remove('show'), 2800);
+    document.querySelectorAll('.map-point').forEach(point => {
+      point.addEventListener('click', () => {
+        mapZone.textContent = point.dataset.zone;
+        mapActivity.textContent = point.dataset.activity;
+        mapRisk.textContent = point.dataset.risk;
+        mapPressure.textContent = point.dataset.pressure;
+        mapStatus.textContent = point.dataset.status;
+      });
     });
+
+    const terminalScreen = document.getElementById('terminalScreen');
+    const terminalLines = [
+      '> initialisation du noyau LACRIME...',
+      '> accès au module de cartographie...',
+      '> synchronisation des unités banalisées...',
+      '> scan des zones sensibles : Forum Drive / Rancho / Strawberry / Davis',
+      '> 4 secteurs sous surveillance active',
+      '> activité élevée détectée sur Davis',
+      '> filature discrète enregistrée sur Strawberry',
+      '> consolidation du renseignement terrain...',
+      '> protocole infiltration prêt',
+      '> statut global : unité opérationnelle'
+    ];
+
+    let lineIndex = 0;
+    const typeTerminal = () => {
+      if (lineIndex >= terminalLines.length) return;
+      const line = document.createElement('div');
+      terminalScreen.appendChild(line);
+      let charIndex = 0;
+
+      const typeChar = () => {
+        if (charIndex < terminalLines[lineIndex].length) {
+          line.textContent += terminalLines[lineIndex][charIndex];
+          charIndex++;
+          setTimeout(typeChar, 22);
+        } else {
+          lineIndex++;
+          terminalScreen.scrollTop = terminalScreen.scrollHeight;
+          setTimeout(typeTerminal, 260);
+        }
+      };
+
+      typeChar();
+    };
+
+    typeTerminal();
   </script>
 </body>
 </html>
