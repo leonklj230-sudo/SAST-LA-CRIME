@@ -3,722 +3,1194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LACRIME | Unité spécialisée SAST</title>
+  <title>LACRIME — Unité spécialisée SAST</title>
+  <meta name="description" content="Site de présentation de l'unité LACRIME, branche spécialisée du SAST dédiée à la lutte contre les gangs, la surveillance discrète et les opérations banalisées." />
   <style>
     :root {
-      --bg: #07111d;
-      --bg-2: #0b1728;
-      --panel: rgba(11, 22, 40, 0.82);
-      --panel-strong: rgba(10, 18, 33, 0.94);
-      --line: rgba(255,255,255,0.08);
-      --text: #eef4ff;
-      --muted: #9bb0cf;
-      --blue: #67c8ff;
-      --cyan: #7ef7e6;
-      --gold: #ffd36e;
-      --danger: #ff6b79;
+      --bg: #07111f;
+      --bg-soft: #0d1b2d;
+      --card: rgba(255,255,255,0.06);
+      --card-2: rgba(255,255,255,0.09);
+      --line: rgba(255,255,255,0.12);
+      --text: #f4f7fb;
+      --muted: #a9b7cc;
+      --accent: #6ea8ff;
+      --accent-2: #8cf0ff;
+      --success: #7df2b0;
+      --warning: #ffd27a;
+      --danger: #ff8686;
       --shadow: 0 20px 60px rgba(0,0,0,0.35);
-      --glow: 0 0 24px rgba(103,200,255,0.18);
-      --radius: 24px;
+      --radius: 22px;
+      --radius-sm: 16px;
+      --max: 1200px;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(103,200,255,.14), transparent 22%),
-        radial-gradient(circle at bottom right, rgba(255,107,121,.08), transparent 18%),
-        linear-gradient(180deg, var(--bg), var(--bg-2));
+        radial-gradient(circle at top left, rgba(110,168,255,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(140,240,255,0.10), transparent 30%),
+        linear-gradient(180deg, #06101d 0%, #081321 45%, #0a1727 100%);
+      min-height: 100vh;
       overflow-x: hidden;
     }
 
-    body::before {
-      content: "";
+    .noise,
+    .grid {
+      pointer-events: none;
       position: fixed;
       inset: 0;
-      pointer-events: none;
-      opacity: .18;
-      background-image:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size: 38px 38px;
+      z-index: 0;
     }
 
+    .grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 95%);
+    }
+
+    .noise {
+      opacity: 0.06;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 0.7px, transparent 0.8px),
+        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.6) 0.7px, transparent 0.8px),
+        radial-gradient(circle at 60% 80%, rgba(255,255,255,0.4) 0.7px, transparent 0.8px);
+      background-size: 120px 120px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+
     .container {
-      width: min(1240px, calc(100% - 32px));
+      width: min(calc(100% - 32px), var(--max));
       margin: 0 auto;
       position: relative;
       z-index: 1;
-      padding: 22px 0 40px;
     }
 
-    .notif-stack {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 50;
-      display: grid;
-      gap: 10px;
-      width: min(360px, calc(100vw - 36px));
-    }
-
-    .notif {
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(7, 14, 26, 0.96);
-      border: 1px solid rgba(103,200,255,.22);
-      box-shadow: var(--shadow), var(--glow);
-      transform: translateX(120%);
-      opacity: 0;
-      transition: .35s ease;
-    }
-
-    .notif.show { transform: translateX(0); opacity: 1; }
-    .notif-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--blue);
-      margin-bottom: 6px;
-      font-weight: 800;
-    }
-    .notif-text { color: var(--text); font-size: 14px; line-height: 1.55; }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px 18px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(8, 16, 31, 0.7);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
+    header {
       position: sticky;
-      top: 12px;
+      top: 0;
       z-index: 20;
-    }
-
-    .brand {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--blue);
-      font-weight: 900;
-      white-space: nowrap;
+      backdrop-filter: blur(16px);
+      background: rgba(5, 12, 22, 0.58);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     .nav {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
     }
 
-    .nav a, .nav button {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      text-decoration: none;
-      padding: 11px 15px;
-      border-radius: 999px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
       font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      transition: .2s ease;
+      letter-spacing: 0.08em;
     }
 
-    .nav a:hover, .nav button:hover,
-    .soft-btn:hover, .soft-btn.active,
-    .tab:hover, .tab.active {
-      border-color: rgba(103,200,255,.32);
-      box-shadow: var(--glow);
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(110,168,255,0.24), rgba(140,240,255,0.1));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow);
+      font-size: 0.9rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .cta,
+    .ghost,
+    .filter-btn {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      padding: 11px 16px;
+      transition: 0.25s ease;
+      font-weight: 600;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .nav-links a:hover,
+    .cta:hover,
+    .ghost:hover,
+    .filter-btn:hover,
+    .filter-btn.active {
       transform: translateY(-1px);
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .cta {
+      background: linear-gradient(135deg, rgba(110,168,255,0.2), rgba(140,240,255,0.15));
     }
 
     .hero {
+      padding: 86px 0 56px;
       display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 18px;
-      margin-top: 18px;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(125,242,176,0.08);
+      border: 1px solid rgba(125,242,176,0.18);
+      color: var(--success);
+      font-weight: 700;
+      font-size: 0.92rem;
       margin-bottom: 18px;
     }
 
-    .card {
-      background: var(--panel);
+    h1 {
+      font-size: clamp(2.3rem, 5vw, 5rem);
+      line-height: 0.95;
+      margin: 0 0 18px;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .hero-stats {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat,
+    .card,
+    .timeline-item,
+    .mission-card,
+    .team-card,
+    .value-card,
+    .faq-item,
+    .contact-card {
+      background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 24px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
+    }
+
+    .stat {
+      padding: 18px;
+    }
+
+    .stat h3 {
+      margin: 0 0 4px;
+      font-size: 1.6rem;
+    }
+
+    .stat p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .hero-panel {
+      padding: 22px;
       position: relative;
       overflow: hidden;
     }
 
-    .card::after {
+    .hero-panel::before {
       content: "";
       position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(140deg, rgba(255,255,255,.04), transparent 28%, transparent 70%, rgba(126,247,230,.04));
+      inset: -20% auto auto -10%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(110,168,255,0.25), transparent 70%);
+      filter: blur(10px);
     }
 
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .mini-badge {
+      padding: 8px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(103,200,255,.24);
-      background: rgba(103,200,255,.10);
-      color: var(--blue);
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      font-weight: 900;
-      margin-bottom: 14px;
+      font-size: 0.85rem;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
     }
 
-    h1, h2, h3, p { margin-top: 0; }
-
-    .title {
-      font-size: clamp(42px, 6vw, 72px);
-      line-height: .95;
-      margin-bottom: 14px;
-      letter-spacing: -.04em;
-    }
-
-    .subtitle {
-      font-size: 17px;
-      line-height: 1.75;
-      color: var(--muted);
-      max-width: 90%;
-      margin-bottom: 18px;
-    }
-
-    .headline-stats,
-    .mini-grid,
-    .objective-grid,
-    .stats-grid,
-    .feature-grid,
-    .report-grid {
+    .dashboard {
+      margin-top: 20px;
       display: grid;
       gap: 14px;
     }
 
-    .headline-stats, .mini-grid { grid-template-columns: repeat(2, 1fr); }
-    .objective-grid, .feature-grid, .report-grid { grid-template-columns: repeat(3, 1fr); }
-    .stats-grid { grid-template-columns: repeat(4, 1fr); }
-
-    .mini,
-    .soft-panel,
-    .report-item,
-    .feature-item,
-    .objective-card,
-    .stat-card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--line);
-      border-radius: 18px;
+    .dash-box {
+      border-radius: var(--radius-sm);
       padding: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
-    .label {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      font-size: 12px;
-      margin-bottom: 6px;
+    .dash-box h4, .card h3, .mission-card h3, .team-card h3, .faq-item h3, .value-card h3 {
+      margin: 0 0 10px;
     }
 
-    .value {
-      font-size: 18px;
-      font-weight: 900;
+    .progress-wrap {
+      display: grid;
+      gap: 10px;
     }
 
-    .section-title {
-      font-size: 28px;
-      margin-bottom: 14px;
-      letter-spacing: -.02em;
+    .progress-line {
+      display: grid;
+      gap: 7px;
     }
 
-    .console {
-      background: var(--panel-strong);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .console-head {
+    .progress-line strong {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--blue);
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
-
-    .console-lines {
-      font-family: Consolas, Monaco, monospace;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #dff9ff;
-      min-height: 90px;
-      white-space: pre-line;
-    }
-
-    .software-nav {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .soft-btn {
-      padding: 14px 16px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .tab {
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .map-shell {
-      position: relative;
-      overflow: hidden;
-      border-radius: 22px;
-      border: 1px solid var(--line);
-      min-height: 520px;
-      background: #09111d;
-      box-shadow: var(--glow);
-    }
-
-    .map-shell img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .map-point {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid #fff;
-      cursor: pointer;
-      transition: transform .15s ease;
-    }
-
-    .map-point:hover { transform: scale(1.12); }
-    .map-point.blue { background: var(--blue); box-shadow: 0 0 18px rgba(103,200,255,.7); }
-    .map-point.gold { background: var(--gold); box-shadow: 0 0 18px rgba(255,211,110,.7); }
-    .map-point.red { background: var(--danger); box-shadow: 0 0 18px rgba(255,107,121,.7); }
-    .map-point.cyan { background: var(--cyan); box-shadow: 0 0 18px rgba(126,247,230,.7); }
-
-    .map-info {
-      margin-top: 14px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-      line-height: 1.7;
-      color: var(--muted);
-    }
-
-    .stat-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
+      font-size: 0.95rem;
     }
 
     .bar {
-      height: 12px;
-      background: rgba(255,255,255,.08);
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.07);
       border-radius: 999px;
       overflow: hidden;
     }
 
-    .fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--gold));
-      border-radius: inherit;
-      transition: width 1.4s ease;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 7px 11px;
-      border-radius: 999px;
-      font-size: 11px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      font-weight: 900;
-      background: rgba(255,211,110,.16);
-      color: var(--gold);
-      border: 1px solid rgba(255,211,110,.16);
-      margin-bottom: 10px;
-    }
-
-    .report-item strong,
-    .feature-item strong {
-      color: var(--blue);
+    .bar span {
       display: block;
-      margin-bottom: 8px;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      width: 0;
+      transition: width 1.2s ease;
     }
 
-    .footer {
-      text-align: center;
+    section {
+      padding: 26px 0 74px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.8rem);
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      margin: 10px 0 0;
       color: var(--muted);
-      font-size: 13px;
-      padding: 6px 0 10px;
+      max-width: 700px;
+      line-height: 1.7;
     }
 
-    .reveal { opacity: 1; transform: none; }
-    .reveal.visible { opacity: 1; transform: none; }
+    .cards-3,
+    .cards-4,
+    .missions-grid,
+    .team-grid,
+    .contact-grid,
+    .github-grid {
+      display: grid;
+      gap: 18px;
+    }
 
-    @media (max-width: 1100px) {
+    .cards-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-4 { grid-template-columns: repeat(4, 1fr); }
+    .missions-grid { grid-template-columns: repeat(3, 1fr); }
+    .team-grid { grid-template-columns: repeat(4, 1fr); }
+    .contact-grid { grid-template-columns: 1.1fr 0.9fr; }
+    .github-grid { grid-template-columns: 1fr 1fr; }
+
+    .card,
+    .mission-card,
+    .team-card,
+    .value-card,
+    .contact-card {
+      padding: 22px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(110,168,255,0.15);
+      border: 1px solid rgba(110,168,255,0.2);
+      margin-bottom: 14px;
+      font-size: 1.2rem;
+    }
+
+    .card p,
+    .mission-card p,
+    .team-card p,
+    .value-card p,
+    .contact-card p,
+    .timeline-item p,
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .mission-card {
+      transition: 0.3s ease;
+    }
+
+    .mission-card:hover,
+    .team-card:hover,
+    .card:hover,
+    .value-card:hover,
+    .timeline-item:hover,
+    .contact-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-2);
+    }
+
+    .mission-tag,
+    .team-tag {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--accent-2);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 18px;
+      padding: 20px;
+      align-items: start;
+    }
+
+    .timeline-step {
+      font-weight: 800;
+      color: var(--accent-2);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      padding-top: 4px;
+    }
+
+    .team-card strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .kpi {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.94rem;
+      color: var(--muted);
+    }
+
+    .repo-box {
+      padding: 22px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .repo-box pre {
+      margin: 0;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #dfe9f7;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .faq {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq-item {
+      padding: 20px;
+    }
+
+    .faq-item button {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: transparent;
+      color: var(--text);
+      border: 0;
+      padding: 0;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      padding-right: 24px;
+    }
+
+    .faq-item.active .faq-content {
+      max-height: 220px;
+      margin-top: 14px;
+    }
+
+    .contact-card ul {
+      list-style: none;
+      margin: 18px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 14px 15px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: 0.25s ease;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: rgba(110,168,255,0.45);
+      box-shadow: 0 0 0 4px rgba(110,168,255,0.12);
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(9, 22, 37, 0.95);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      transform: translateY(140%);
+      transition: 0.35s ease;
+      z-index: 40;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    footer {
+      padding: 26px 0 42px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1080px) {
       .hero,
-      .layout,
-      .stats-grid,
-      .objective-grid,
-      .feature-grid,
-      .report-grid,
-      .software-nav {
-        grid-template-columns: repeat(2, 1fr);
+      .contact-grid,
+      .github-grid,
+      .cards-4,
+      .team-grid,
+      .missions-grid,
+      .cards-3 {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
-    @media (max-width: 780px) {
-      .topbar,
+    @media (max-width: 860px) {
       .hero,
-      .layout,
-      .headline-stats,
-      .mini-grid,
-      .stats-grid,
-      .objective-grid,
-      .feature-grid,
-      .report-grid,
-      .software-nav {
+      .contact-grid,
+      .github-grid,
+      .cards-4,
+      .team-grid,
+      .missions-grid,
+      .cards-3,
+      .form-row,
+      .hero-stats {
         grid-template-columns: 1fr;
-        display: grid;
       }
 
-      .topbar { position: static; }
-      .subtitle { max-width: 100%; }
-      .nav { justify-content: flex-start; }
-      .title { font-size: 44px; }
-      .map-shell { min-height: 380px; }
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      h1 {
+        line-height: 1;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="container">
-    <div class="notif-stack" id="notifStack"></div>
+  <div class="grid"></div>
+  <div class="noise"></div>
 
-    <header class="topbar">
-      <div class="brand">LACRIME • unité spécialisée SAST • dossier classifié</div>
-      <nav class="nav">
-        <a href="#presentation">Présentation</a>
-        <a href="#missions">Missions</a>
+  <header>
+    <div class="container nav">
+      <a href="#top" class="brand">
+        <div class="brand-mark">LC</div>
+        <div>
+          <div>LACRIME</div>
+          <small style="color: var(--muted); font-weight: 600; letter-spacing: 0.02em;">Unité spécialisée SAST</small>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#mission">Mission</a>
         <a href="#objectifs">Objectifs</a>
-        <a href="#mapSection">Carte GTA</a>
-        <button id="alertBtn">Alerte</button>
+        <a href="#operations">Opérations</a>
+        <a href="#structure">Structure</a>
+        <a href="#github">GitHub</a>
+        <a href="#contact" class="cta">Rejoindre le projet</a>
       </nav>
-    </header>
+    </div>
+  </header>
 
-    <section class="hero" id="presentation">
-      <article class="card reveal visible">
-        <div class="tag">Projet d’unité spécialisée</div>
-        <h1 class="title">L.A.C.R.I.M.E</h1>
-        <p class="subtitle">
-          LACRIME est une unité spécialisée de la SAST conçue pour agir dans les zones à forte activité criminelle,
-          avec une approche basée sur les gangs, la surveillance discrète, les véhicules banalisés, le renseignement terrain
-          et les interventions ciblées. L’objectif est simple : être plus précis, plus intelligent et plus crédible qu’une réponse classique.
-        </p>
-        <div class="headline-stats">
-          <div class="mini"><div class="label">Statut</div><div class="value">Projet actif</div></div>
-          <div class="mini"><div class="label">Structure</div><div class="value">Branche SAST</div></div>
-          <div class="mini"><div class="label">Spécialité</div><div class="value">Gangs / civil</div></div>
-          <div class="mini"><div class="label">Approche</div><div class="value">Renseignement + action</div></div>
-        </div>
-      </article>
+  <main id="top">
+    <section>
+      <div class="container hero">
+        <div class="reveal visible">
+          <div class="eyebrow">● Division anti-gang • civil • infiltration • banalisés</div>
+          <h1>LACRIME<br>la branche du SAST pensée pour frapper les réseaux avant qu’ils ne frappent la ville</h1>
+          <p>
+            LACRIME est une unité spécialisée imaginée pour la surveillance discrète, l’enquête terrain, les véhicules banalisés,
+            l’infiltration et la neutralisation ciblée des groupes criminels. Le projet met l’accent sur l’intelligence, la stratégie,
+            la pression constante sur les gangs et une vraie montée en puissance à travers des objectifs courts, moyens et longs termes.
+          </p>
 
-      <article class="card reveal visible">
-        <div class="console">
-          <div class="console-head"><span>System console</span><span>Live feed</span></div>
-          <div class="console-lines" id="consoleLines">[BOOT] lacrime_system initialized...
-[CHECK] encrypted field dossier loaded...
-[INFO] undercover branch available...
-[TRACE] gang surveillance protocols ready...
-[READY] operator access confirmed...</div>
-        </div>
-
-        <h2 class="section-title">Interface d’unité</h2>
-        <div class="tabs">
-          <button class="tab active" data-tab="tab1">Résumé</button>
-          <button class="tab" data-tab="tab2">Banalisés</button>
-          <button class="tab" data-tab="tab3">Gang Unit</button>
-        </div>
-
-        <div class="tab-content active" id="tab1">
-          <div class="mini-grid">
-            <div class="soft-panel"><div class="label">Mission principale</div><div class="value">Lutter contre la criminalité de rue organisée</div></div>
-            <div class="soft-panel"><div class="label">Type d’agents</div><div class="value">Discrets, calmes, stratégiques</div></div>
-            <div class="soft-panel"><div class="label">Méthode</div><div class="value">Infiltration, observation, intervention</div></div>
-            <div class="soft-panel"><div class="label">Véhicules</div><div class="value">Banalisés</div></div>
+          <div class="hero-actions">
+            <a href="#github" class="cta">Voir la structure GitHub</a>
+            <a href="#objectifs" class="ghost">Découvrir les objectifs</a>
           </div>
-          <div class="soft-panel" style="margin-top:14px;">
-            <div class="label">Phrase d’unité</div>
-            <div class="value">Voir sans être vu. Comprendre avant d’agir.</div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <h3 data-counter="24">0</h3>
+              <p>surveillances discrètes mensuelles visées</p>
+            </div>
+            <div class="stat">
+              <h3 data-counter="8">0</h3>
+              <p>cellules d’intervention spécialisées à terme</p>
+            </div>
+            <div class="stat">
+              <h3 data-counter="3">0</h3>
+              <p>axes stratégiques : renseignement, terrain, neutralisation</p>
+            </div>
           </div>
         </div>
 
-        <div class="tab-content" id="tab2">
-          <div class="soft-panel">
-            <div class="label">Mission banalisée</div>
-            <p>Les équipes banalisées assurent une présence crédible et invisible dans les secteurs sensibles. Elles observent, suivent, identifient, confirment, puis transmettent ou déclenchent une action ciblée au bon moment.</p>
+        <div class="hero-panel reveal">
+          <div class="badge-row">
+            <span class="mini-badge">Undercover</span>
+            <span class="mini-badge">Banalisés</span>
+            <span class="mini-badge">Renseignement</span>
+            <span class="mini-badge">Anti-gang</span>
+          </div>
+
+          <div class="dashboard">
+            <div class="dash-box">
+              <h4>Niveau de priorité</h4>
+              <div class="progress-wrap">
+                <div class="progress-line">
+                  <strong><span>Identification des gangs</span><span>92%</span></strong>
+                  <div class="bar"><span data-width="92%"></span></div>
+                </div>
+                <div class="progress-line">
+                  <strong><span>Infiltration terrain</span><span>76%</span></strong>
+                  <div class="bar"><span data-width="76%"></span></div>
+                </div>
+                <div class="progress-line">
+                  <strong><span>Coordination inter-services</span><span>84%</span></strong>
+                  <div class="bar"><span data-width="84%"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-box">
+              <h4>Doctrine d’action</h4>
+              <p>Observer. Cartographier. Infiltrer. Isoler. Intervenir. Exploiter le renseignement jusqu’au démantèlement complet des structures ciblées.</p>
+            </div>
+
+            <div class="dash-box">
+              <h4>Mode opératoire</h4>
+              <p>Présence discrète, véhicules non marqués, pression psychologique, collecte de preuves, frappes ciblées et sécurisation durable des zones sensibles.</p>
+            </div>
           </div>
         </div>
-
-        <div class="tab-content" id="tab3">
-          <div class="soft-panel">
-            <div class="label">Branche gangs</div>
-            <p>LACRIME constitue la partie de la SAST spécialisée dans la lecture des blocs, le suivi des alliances, la surveillance des points chauds et la création de dossiers cohérents sur les groupes les plus actifs.</p>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <section class="software-nav reveal visible">
-      <button class="soft-btn active" data-jump="#missions">Missions</button>
-      <button class="soft-btn" data-jump="#objectifs">Objectifs</button>
-      <button class="soft-btn" data-jump="#reports">Rapports</button>
-      <button class="soft-btn" data-jump="#garage">Banalisés</button>
-      <button class="soft-btn" data-jump="#mapSection">Carte GTA</button>
-      <button class="soft-btn" data-jump="#whySection">Vision</button>
-    </section>
-
-    <section class="layout" id="missions">
-      <article class="card reveal visible">
-        <h2 class="section-title">Fonctionnement de l’unité</h2>
-        <div class="feature-grid">
-          <div class="feature-item"><strong>Surveillance</strong>Observation continue des comportements, lecture des mouvements et constitution de dossiers utiles.</div>
-          <div class="feature-item"><strong>Renseignement terrain</strong>Collecte et recoupement d’informations sur les secteurs, les dynamiques locales et les groupes suivis.</div>
-          <div class="feature-item"><strong>Infiltration</strong>Présence en civil dans des zones sensibles avec une posture crédible et discrète.</div>
-        </div>
-      </article>
-
-      <article class="card reveal visible">
-        <h2 class="section-title">Stats d’unité</h2>
-        <div class="stats-grid" id="statsSection">
-          <div class="stat-card">
-            <div class="stat-head"><span>Discrétion</span><strong>94%</strong></div>
-            <div class="bar"><div class="fill" data-width="94%"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-head"><span>Observation</span><strong>91%</strong></div>
-            <div class="bar"><div class="fill" data-width="91%"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-head"><span>Réactivité</span><strong>86%</strong></div>
-            <div class="bar"><div class="fill" data-width="86%"></div></div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-head"><span>Coordination</span><strong>88%</strong></div>
-            <div class="bar"><div class="fill" data-width="88%"></div></div>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <section class="card reveal visible" id="mapSection">
-      <h2 class="section-title">Carte GTA interactive</h2>
-      <div class="map-shell">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/GTA_V_map.svg/1200px-GTA_V_map.svg.png" alt="Carte GTA V">
-        <button class="map-point blue" style="left:31%; top:63%;" data-title="Grove Street" data-text="Zone sensible avec activité de rue régulière. Surveillance discrète recommandée."></button>
-        <button class="map-point gold" style="left:38%; top:58%;" data-title="Davis" data-text="Secteur sous tension avec passages fréquents et besoin de présence banalisée."></button>
-        <button class="map-point red" style="left:42%; top:61%;" data-title="Rancho" data-text="Zone intéressante pour infiltration, repérage des habitudes et lecture du terrain."></button>
-        <button class="map-point cyan" style="left:46%; top:49%;" data-title="Mission Row" data-text="Centre logistique et point d’appui pour coordination opérationnelle."></button>
       </div>
-      <div id="mapInfo" class="map-info"><strong>Carte active</strong><br>Clique sur un point de la carte pour afficher les informations RP de la zone.</div>
     </section>
 
-    <section class="layout" id="objectifs">
-      <article class="card reveal visible">
-        <h2 class="section-title">Objectifs à court / moyen / long terme</h2>
-        <div class="objective-grid">
-          <div class="objective-card">
-            <div class="badge">Court terme</div>
-            <p>Créer officiellement l’unité, sélectionner les premiers agents, lancer les premiers suivis banalisés et structurer les méthodes de travail.</p>
-          </div>
-          <div class="objective-card">
-            <div class="badge">Moyen terme</div>
-            <p>Développer un réseau de renseignement terrain, identifier les groupes majeurs et créer une coordination solide avec les autres unités.</p>
-          </div>
-          <div class="objective-card">
-            <div class="badge">Long terme</div>
-            <p>Réduire durablement l’activité des gangs sur les points sensibles et faire de LACRIME une vraie référence en intervention ciblée.</p>
+    <section id="mission">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Mission et vision</h2>
+            <p>LACRIME n’est pas une simple unité d’intervention. C’est une structure pensée pour comprendre les dynamiques de rue, anticiper les mouvements criminels et casser durablement l’influence des gangs dans les quartiers sensibles.</p>
           </div>
         </div>
-      </article>
 
-      <article class="card reveal visible" id="garage">
-        <h2 class="section-title">Véhicules banalisés</h2>
-        <div class="report-grid">
-          <div class="report-item"><strong>SUV discret</strong>Présence mobile sur zones chaudes, suivi longue durée, observation calme.</div>
-          <div class="report-item"><strong>Berline civile</strong>Intégration urbaine crédible, déplacements propres et repérage sans visibilité excessive.</div>
-          <div class="report-item"><strong>Véhicule d’appui</strong>Extraction rapide, soutien lors d’une opération ciblée, coordination terrain.</div>
+        <div class="cards-3">
+          <article class="card reveal">
+            <div class="icon">🕵️</div>
+            <h3>Surveillance discrète</h3>
+            <p>Observation prolongée des secteurs chauds, collecte de visuels, repérage des habitudes, plaques, points de deal, véhicules de soutien et déplacements de groupes.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">🚓</div>
+            <h3>Banalisés et mobilité</h3>
+            <p>Utilisation de véhicules non identifiables pour les filatures, approches silencieuses, repérages urbains et mise sous pression des réseaux sans déclencher une fuite immédiate.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="icon">🎯</div>
+            <h3>Action ciblée</h3>
+            <p>Arrestations stratégiques, descentes coordonnées, exploitation des renseignements et neutralisation des acteurs clés plutôt que réponse uniquement réactive.</p>
+          </article>
         </div>
-      </article>
+      </div>
     </section>
 
-    <section class="layout" id="reports">
-      <article class="card reveal visible">
-        <h2 class="section-title">Rapports opérationnels</h2>
-        <div class="report-grid">
-          <div class="report-item"><strong>Observation bloc sud</strong>Présence répétée d’individus affiliés à des groupes locaux. Activité stable. Surveillance prolongée recommandée.</div>
-          <div class="report-item"><strong>Point de deal sous suivi</strong>Rotation fréquente, profils jeunes, zone sensible. Lecture terrain nécessaire avant toute action visible.</div>
-          <div class="report-item"><strong>Coordination inter-unités</strong>Besoin d’un lien plus direct entre renseignement discret et intervention rapide.</div>
+    <section id="objectifs">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Objectifs court, moyen et long terme</h2>
+            <p>Le projet repose sur une évolution claire. Chaque phase construit la suivante pour faire de LACRIME une référence dans la lutte anti-gang et les opérations discrètes du SAST.</p>
+          </div>
         </div>
-      </article>
 
-      <article class="card reveal visible" id="whySection">
-        <h2 class="section-title">Pourquoi créer LACRIME ?</h2>
-        <p class="subtitle" style="max-width:100%; margin-bottom:0;">
-          Les gangs ne se combattent pas uniquement avec des interventions visibles. Une partie du travail passe par l’anticipation,
-          l’observation et une compréhension réelle du terrain. LACRIME existe pour combler cet espace : agir plus tôt, frapper plus juste,
-          et donner à la SAST une unité capable d’être crédible dans les environnements les plus sensibles.
-        </p>
-      </article>
+        <div class="timeline">
+          <article class="timeline-item reveal">
+            <div class="timeline-step">Court terme</div>
+            <div>
+              <h3>Installer l’unité et poser les fondations</h3>
+              <p>Créer l’identité de l’unité, définir la hiérarchie, sélectionner les premiers agents, formaliser les protocoles d’utilisation des banalisés, constituer un premier dossier de renseignement sur les gangs actifs et lancer les premières surveillances pilotes.</p>
+            </div>
+          </article>
+
+          <article class="timeline-item reveal">
+            <div class="timeline-step">Moyen terme</div>
+            <div>
+              <h3>Monter en puissance sur le terrain</h3>
+              <p>Développer une vraie capacité d’infiltration, créer des cellules spécialisées par type de menace, coordonner l’échange d’informations avec les autres services, identifier les leaders, cartographier les alliances et multiplier les opérations préparées par le renseignement.</p>
+            </div>
+          </article>
+
+          <article class="timeline-item reveal">
+            <div class="timeline-step">Long terme</div>
+            <div>
+              <h3>Devenir l’unité de référence anti-gang</h3>
+              <p>Installer une pression durable dans les zones à risque, démanteler les structures majeures, imposer une présence invisible mais constante, professionnaliser encore la doctrine et faire de LACRIME un standard de réalisme, d’efficacité et d’immersion RP.</p>
+            </div>
+          </article>
+        </div>
+      </div>
     </section>
 
-    <div class="footer">Version visuelle refaite • interface propre • cards premium • navigation moderne • map GTA intégrée</div>
+    <section id="operations">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Opérations de terrain</h2>
+            <p>Voici les grands types d’actions que l’unité peut mener. Clique sur un filtre pour mettre en avant un style d’intervention.</p>
+          </div>
+        </div>
+
+        <div class="filters reveal">
+          <button class="filter-btn active" data-filter="all">Tout afficher</button>
+          <button class="filter-btn" data-filter="surveillance">Surveillance</button>
+          <button class="filter-btn" data-filter="infiltration">Infiltration</button>
+          <button class="filter-btn" data-filter="intervention">Intervention</button>
+        </div>
+
+        <div class="missions-grid">
+          <article class="mission-card reveal" data-type="surveillance">
+            <div class="mission-tag">Surveillance</div>
+            <h3>Quadrillage des secteurs à risque</h3>
+            <p>Présence discrète dans les zones de tension, observation des flux, identification des heures sensibles et consolidation d’une routine de suivi long format.</p>
+            <div class="kpi"><span>Impact</span><strong>Très élevé</strong></div>
+          </article>
+
+          <article class="mission-card reveal" data-type="infiltration">
+            <div class="mission-tag">Infiltration</div>
+            <h3>Collecte sous couverture</h3>
+            <p>Insertion contrôlée en environnement hostile pour remonter les circuits, identifier les profils dominants et documenter la structure interne des groupes ciblés.</p>
+            <div class="kpi"><span>Risque</span><strong>Élevé</strong></div>
+          </article>
+
+          <article class="mission-card reveal" data-type="intervention">
+            <div class="mission-tag">Intervention</div>
+            <h3>Arrestations ciblées</h3>
+            <p>Neutralisation de profils clés sur la base de renseignements consolidés, avec action rapide, discrète, propre et exploitation immédiate des preuves.</p>
+            <div class="kpi"><span>Fenêtre d’action</span><strong>Courte</strong></div>
+          </article>
+
+          <article class="mission-card reveal" data-type="surveillance">
+            <div class="mission-tag">Surveillance</div>
+            <h3>Filatures banalisées</h3>
+            <p>Suivi mobile via véhicules civils pour relier individus, lieux, véhicules relais et points de stockage sans révéler la présence des forces de l’ordre.</p>
+            <div class="kpi"><span>Mobilité</span><strong>Essentielle</strong></div>
+          </article>
+
+          <article class="mission-card reveal" data-type="intervention">
+            <div class="mission-tag">Intervention</div>
+            <h3>Appui aux grosses opérations</h3>
+            <p>LACRIME prépare le terrain, repère les sorties, les contacts et les réactions probables, puis appuie les unités visibles lors des perquisitions ou interpellations.</p>
+            <div class="kpi"><span>Coordination</span><strong>Inter-services</strong></div>
+          </article>
+
+          <article class="mission-card reveal" data-type="infiltration">
+            <div class="mission-tag">Infiltration</div>
+            <h3>Pression psychologique ciblée</h3>
+            <p>Multiplier les signaux discrets, déranger les habitudes, casser le sentiment d’impunité et forcer les erreurs sans passer immédiatement par la confrontation ouverte.</p>
+            <div class="kpi"><span>Effet</span><strong>Progressif</strong></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="structure">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Structure proposée</h2>
+            <p>Une unité efficace repose sur une organisation claire. Voici une base solide pour répartir les rôles et maintenir un haut niveau de spécialisation.</p>
+          </div>
+        </div>
+
+        <div class="team-grid">
+          <article class="team-card reveal">
+            <div class="team-tag">Commandement</div>
+            <strong>Chef d’unité</strong>
+            <p>Fixe la doctrine, valide les opérations sensibles, supervise la progression globale et représente l’unité auprès de la hiérarchie.</p>
+          </article>
+
+          <article class="team-card reveal">
+            <div class="team-tag">Terrain</div>
+            <strong>Agents banalisés</strong>
+            <p>Assurent la filature, la présence discrète, l’observation et la collecte terrain sans exposition immédiate de la structure.</p>
+          </article>
+
+          <article class="team-card reveal">
+            <div class="team-tag">Renseignement</div>
+            <strong>Analystes</strong>
+            <p>Tri des données, synthèses opérationnelles, cartographie des gangs, suivi des mouvements et préparation des dossiers cibles.</p>
+          </article>
+
+          <article class="team-card reveal">
+            <div class="team-tag">Action</div>
+            <strong>Cellule d’interception</strong>
+            <p>Intervient sur les phases finales, sécurise les interpellations et transforme le renseignement en action concrète et contrôlée.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Valeurs opérationnelles</h2>
+            <p>LACRIME doit avoir une identité forte. Ces principes permettent de garder une ligne claire dans toutes les interventions.</p>
+          </div>
+        </div>
+
+        <div class="cards-4">
+          <article class="value-card reveal">
+            <div class="icon">🧠</div>
+            <h3>Intelligence</h3>
+            <p>Comprendre avant d’agir. Le renseignement construit l’avantage.</p>
+          </article>
+
+          <article class="value-card reveal">
+            <div class="icon">🎭</div>
+            <h3>Discrétion</h3>
+            <p>Être vu le moins possible, mais sentir sa présence partout.</p>
+          </article>
+
+          <article class="value-card reveal">
+            <div class="icon">⚖️</div>
+            <h3>Contrôle</h3>
+            <p>Intervenir avec précision, sans sur-réaction ni chaos inutile.</p>
+          </article>
+
+          <article class="value-card reveal">
+            <div class="icon">🏙️</div>
+            <h3>Stabilité</h3>
+            <p>Réduire durablement l’influence criminelle dans les quartiers ciblés.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="github">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Organisation GitHub du projet</h2>
+            <p>Pour rendre le projet propre, sérieux et facile à gérer, le dépôt GitHub peut être structuré comme une vraie base documentaire opérationnelle.</p>
+          </div>
+        </div>
+
+        <div class="github-grid">
+          <div class="repo-box reveal">
+            <h3 style="margin-top:0;">Arborescence conseillée</h3>
+            <pre>LACRIME/
+├── index.html
+├── README.md
+├── assets/
+│   ├── logo.png
+│   ├── banner.jpg
+│   └── icons/
+├── docs/
+│   ├── presentation-unite.md
+│   ├── objectifs.md
+│   ├── organigramme.md
+│   ├── doctrine-operationnelle.md
+│   └── recrutement.md
+├── reports/
+│   ├── operations-exemple.md
+│   └── syntheses-renseignement.md
+└── archive/
+    └── versions-precedentes/</pre>
+          </div>
+
+          <div class="repo-box reveal">
+            <h3 style="margin-top:0;">Contenu du README</h3>
+            <pre># LACRIME
+Unité spécialisée du SAST dédiée à la lutte anti-gang,
+aux opérations banalisées, au renseignement terrain
+et aux interventions ciblées.
+
+## Objectifs
+- Court terme : créer l’unité
+- Moyen terme : structurer les opérations
+- Long terme : devenir une référence anti-gang
+
+## Axes
+- Surveillance discrète
+- Infiltration
+- Interception ciblée
+- Coordination inter-services
+
+## Vision
+Créer une unité crédible, immersive, efficace et durable.</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Questions fréquentes</h2>
+            <p>Bloc interactif pour rendre le site plus vivant et plus professionnel.</p>
+          </div>
+        </div>
+
+        <div class="faq">
+          <article class="faq-item reveal">
+            <button type="button">
+              <span>Quel est le rôle principal de LACRIME ?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-content">
+              <p>LACRIME sert à surveiller, comprendre, infiltrer et neutraliser les structures criminelles liées aux gangs grâce à des méthodes discrètes et une exploitation poussée du renseignement.</p>
+            </div>
+          </article>
+
+          <article class="faq-item reveal">
+            <button type="button">
+              <span>Pourquoi utiliser des véhicules banalisés ?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-content">
+              <p>Les banalisés permettent de suivre, observer et approcher des cibles sans provoquer immédiatement une réaction défensive ou une fuite, ce qui augmente énormément la qualité du renseignement récolté.</p>
+            </div>
+          </article>
+
+          <article class="faq-item reveal">
+            <button type="button">
+              <span>Quelle différence avec une unité classique ?</span>
+              <span>+</span>
+            </button>
+            <div class="faq-content">
+              <p>Une unité classique agit souvent en présence visible. LACRIME travaille d’abord dans l’ombre, prépare le terrain, structure les preuves et choisit le meilleur moment pour faire tomber les cibles.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <h2>Rejoindre ou présenter le projet</h2>
+            <p>Section utile pour un rendu GitHub Pages plus propre. Le formulaire est en démonstration visuelle et affiche un message interactif à l’envoi.</p>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+          <article class="contact-card reveal">
+            <h3>Présentation rapide</h3>
+            <p>LACRIME est pensé comme un projet RP sérieux, moderne et cohérent. Il vise à enrichir les scènes policières avec plus de préparation, de stratégie et d’immersion dans la lutte contre les gangs.</p>
+            <ul>
+              <li>• Spécialisation anti-gang</li>
+              <li>• Véhicules banalisés et présence discrète</li>
+              <li>• Suivi des objectifs stratégiques</li>
+              <li>• Documentation claire via GitHub</li>
+            </ul>
+          </article>
+
+          <article class="contact-card reveal">
+            <h3>Formulaire démo</h3>
+            <form class="form" id="joinForm">
+              <div class="form-row">
+                <div class="field">
+                  <label for="name">Nom</label>
+                  <input id="name" type="text" placeholder="Nom ou pseudo" required />
+                </div>
+                <div class="field">
+                  <label for="role">Rôle visé</label>
+                  <select id="role" required>
+                    <option value="">Choisir</option>
+                    <option>Agent banalisé</option>
+                    <option>Analyste renseignement</option>
+                    <option>Commandement</option>
+                    <option>Support opérationnel</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message">Motivation</label>
+                <textarea id="message" placeholder="Explique pourquoi tu veux rejoindre ou soutenir le projet" required></textarea>
+              </div>
+              <button class="cta" type="submit">Envoyer</button>
+            </form>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
+  <footer>
+    <div class="container footer-wrap">
+      <div>© 2026 — LACRIME / SAST — Projet de présentation</div>
+      <div>Site vitrine GitHub Pages • HTML / CSS / JavaScript</div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Message envoyé. Cette démo est visuelle pour GitHub Pages.</div>
+
   <script>
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const parent = tab.parentElement.parentElement;
-        parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
-      });
-    });
-
-    document.querySelectorAll('.soft-btn').forEach(item => {
-      item.addEventListener('click', () => {
-        document.querySelectorAll('.soft-btn').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        const target = document.querySelector(item.dataset.jump);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-
-    document.querySelectorAll('.map-point').forEach(point => {
-      point.addEventListener('click', () => {
-        document.getElementById('mapInfo').innerHTML = '<strong>' + point.dataset.title + '</strong><br>' + point.dataset.text;
-      });
-    });
-
-    const notifStack = document.getElementById('notifStack');
-    function pushNotif(title, text) {
-      const el = document.createElement('div');
-      el.className = 'notif';
-      el.innerHTML = '<div class="notif-title">' + title + '</div><div class="notif-text">' + text + '</div>';
-      notifStack.appendChild(el);
-      requestAnimationFrame(() => el.classList.add('show'));
-      setTimeout(() => {
-        el.classList.remove('show');
-        setTimeout(() => el.remove(), 350);
-      }, 3200);
-    }
-
-    document.getElementById('alertBtn').addEventListener('click', () => {
-      pushNotif('Alerte rouge', 'Intervention en cours sur secteur surveillé.');
-    });
-
-    const consoleLines = document.getElementById('consoleLines');
-    const liveFeed = [
-      '[TRACE] undercover vehicle registry available...',
-      '[INFO] urban gang monitoring active...',
-      '[SYNC] field intelligence updated...',
-      '[CHECK] recruitment standards confirmed...',
-      '[STATUS] lacrime response capability stable...'
-    ];
-    let liveIndex = 0;
-    setInterval(() => {
-      const line = liveFeed[liveIndex % liveFeed.length];
-      consoleLines.textContent += '\n' + line;
-      const parts = consoleLines.textContent.split('\n');
-      if (parts.length > 7) {
-        consoleLines.textContent = parts.slice(parts.length - 7).join('\n');
-      }
-      liveIndex++;
-    }, 2600);
-
-    const statsSection = document.getElementById('statsSection');
-    let statsDone = false;
-    const statsObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && !statsDone) {
-          statsDone = true;
-          document.querySelectorAll('.fill').forEach(fill => {
-            fill.style.width = fill.dataset.width;
-          });
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
         }
       });
-    }, { threshold: 0.25 });
-    statsObserver.observe(statsSection);
+    }, { threshold: 0.14 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    const counters = document.querySelectorAll('[data-counter]');
+    const animateCounter = (el) => {
+      const target = Number(el.dataset.counter);
+      let count = 0;
+      const step = Math.max(1, Math.ceil(target / 40));
+      const tick = () => {
+        count += step;
+        if (count >= target) {
+          el.textContent = target;
+          return;
+        }
+        el.textContent = count;
+        requestAnimationFrame(tick);
+      };
+      tick();
+    };
+
+    counters.forEach(animateCounter);
+
+    document.querySelectorAll('.bar span').forEach((bar, index) => {
+      setTimeout(() => {
+        bar.style.width = bar.dataset.width;
+      }, 250 + index * 150);
+    });
+
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const missionCards = document.querySelectorAll('.mission-card');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+
+        missionCards.forEach(card => {
+          const show = filter === 'all' || card.dataset.type === filter;
+          card.style.display = show ? 'block' : 'none';
+        });
+      });
+    });
+
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const button = item.querySelector('button');
+      const symbol = button.querySelector('span:last-child');
+      button.addEventListener('click', () => {
+        const active = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(other => {
+          other.classList.remove('active');
+          const otherSymbol = other.querySelector('button span:last-child');
+          if (otherSymbol) otherSymbol.textContent = '+';
+        });
+        if (!active) {
+          item.classList.add('active');
+          symbol.textContent = '–';
+        }
+      });
+    });
+
+    const form = document.getElementById('joinForm');
+    const toast = document.getElementById('toast');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      toast.classList.add('show');
+      form.reset();
+      setTimeout(() => toast.classList.remove('show'), 2800);
+    });
   </script>
 </body>
 </html>
