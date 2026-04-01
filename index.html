@@ -590,89 +590,6 @@
         linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
     }
 
-    .map-grid {
-      position:absolute;
-      inset:0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size:36px 36px;
-    }
-
-    .road {
-      position:absolute;
-      background: linear-gradient(90deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03));
-      box-shadow:0 0 18px rgba(255,255,255,0.04);
-    }
-
-    .road-h { left:8%; right:10%; top:49%; height:4px; }
-    .road-v { top:12%; bottom:10%; left:51%; width:4px; }
-    .road-d1 {
-      width:42%;
-      height:4px;
-      left:16%;
-      top:30%;
-      transform: rotate(24deg);
-      transform-origin:left center;
-    }
-    .road-d2 {
-      width:34%;
-      height:4px;
-      right:12%;
-      bottom:20%;
-      transform: rotate(-28deg);
-      transform-origin:right center;
-    }
-
-    .zone-label {
-      position:absolute;
-      color:#dfe7f3;
-      font-size:0.92rem;
-      font-weight:700;
-      letter-spacing:0.04em;
-      text-shadow:0 0 18px rgba(0,0,0,0.35);
-    }
-
-    .zone-forum { left:14%; top:16%; }
-    .zone-rancho { right:23%; top:13%; }
-    .zone-strawberry { left:25%; bottom:23%; }
-    .zone-davis { right:20%; bottom:18%; }
-
-    .map-point {
-      position:absolute;
-      width:18px;
-      height:18px;
-      border:2px solid rgba(255,255,255,0.85);
-      border-radius:50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      cursor:pointer;
-      box-shadow:0 0 0 0 rgba(110,168,255,0.55);
-      animation:pulsePoint 1.8s infinite;
-      transition:transform 0.2s ease;
-      z-index:2;
-    }
-
-    .map-point:hover { transform: scale(1.12); }
-
-    .map-point::after {
-      content:"";
-      position:absolute;
-      inset:-7px;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,0.16);
-    }
-
-    .point-forum { left:25%; top:31%; }
-    .point-rancho { left:70%; top:27%; }
-    .point-strawberry { left:35%; top:69%; }
-    .point-davis { left:77%; top:72%; }
-
-    @keyframes pulsePoint {
-      0% { box-shadow: 0 0 0 0 rgba(110,168,255,0.55); }
-      70% { box-shadow: 0 0 0 14px rgba(110,168,255,0); }
-      100% { box-shadow: 0 0 0 0 rgba(110,168,255,0); }
-    }
-
     .intel-top {
       display:flex;
       gap:10px;
@@ -885,7 +802,6 @@
 
           <article class="hero-visual">
             <h2>Identité visuelle police</h2>
-            <p>Version plus dense de la présentation avec des éléments visuels liés à la police pour donner une vraie présence au dossier.</p>
             <div class="hero-icons">
               <div class="police-icon">
                 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1016,21 +932,63 @@
           <p>Carte de présentation destinée à visualiser les secteurs prioritaires pour le lancement de l’unité.</p>
           <div class="map-layout">
             <div class="tactical-map">
-              <div class="map-grid"></div>
-              <div class="road road-h"></div>
-              <div class="road road-v"></div>
-              <div class="road road-d1"></div>
-              <div class="road road-d2"></div>
+              <svg viewBox="0 0 900 560" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="position:absolute; inset:0; width:100%; height:100%;">
+                <defs>
+                  <linearGradient id="bgMap" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#10233c"/>
+                    <stop offset="100%" stop-color="#0a1830"/>
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="8" result="blur"/>
+                    <feMerge>
+                      <feMergeNode in="blur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
 
-              <div class="zone-label zone-forum">FORUM DRIVE</div>
-              <div class="zone-label zone-rancho">RANCHO</div>
-              <div class="zone-label zone-strawberry">STRAWBERRY</div>
-              <div class="zone-label zone-davis">DAVIS</div>
+                <rect width="900" height="560" fill="url(#bgMap)"/>
 
-              <button class="map-point point-forum" data-zone="Forum Drive" data-risk="Moyen" data-action="Surveillance active" data-status="Zone suivie en discret" data-activity="Présence de regroupements réguliers et observation des mouvements de véhicules."></button>
-              <button class="map-point point-rancho" data-zone="Rancho" data-risk="Moyen" data-action="Observation" data-status="Analyse en cours" data-activity="Échanges rapides et circulation intermittente d’intermédiaires."></button>
-              <button class="map-point point-strawberry" data-zone="Strawberry" data-risk="Élevé" data-action="Filatures" data-status="Renseignement prioritaire" data-activity="Activité de rue plus dense avec points de contact mobiles."></button>
-              <button class="map-point point-davis" data-zone="Davis" data-risk="Critique" data-action="Intervention préparée" data-status="Zone à haute tension" data-activity="Implantation structurée et influence territoriale plus marquée."></button>
+                <g opacity="0.18" stroke="#9fc7ff" stroke-width="1">
+                  <path d="M0 80H900M0 160H900M0 240H900M0 320H900M0 400H900M0 480H900"/>
+                  <path d="M80 0V560M160 0V560M240 0V560M320 0V560M400 0V560M480 0V560M560 0V560M640 0V560M720 0V560M800 0V560"/>
+                </g>
+
+                <g stroke="#90a9c7" stroke-opacity="0.22" stroke-width="6" fill="none">
+                  <path d="M40 310 L860 310"/>
+                  <path d="M470 40 L470 520"/>
+                  <path d="M120 180 L510 350"/>
+                  <path d="M680 520 L850 430"/>
+                  <path d="M110 470 L290 420 L450 455 L650 420"/>
+                </g>
+
+                <g fill="#dfe7f3" font-size="28" font-weight="700" font-family="Inter, Arial, sans-serif">
+                  <text x="90" y="110">VINEWOOD</text>
+                  <text x="315" y="118">DOWNTOWN</text>
+                  <text x="645" y="115">MIRROR PARK</text>
+                  <text x="88" y="250">LITTLE SEOUL</text>
+                  <text x="330" y="255">MISSION ROW</text>
+                  <text x="635" y="245">CYPRESS FLATS</text>
+                  <text x="115" y="410">STRAWBERRY</text>
+                  <text x="360" y="410">RANCHO</text>
+                  <text x="665" y="405">DAVIS</text>
+                  <text x="90" y="505">FORUM DRIVE</text>
+                </g>
+
+                <g>
+                  <circle cx="208" cy="470" r="22" fill="#6ea8ff" fill-opacity="0.16" filter="url(#glow)"/>
+                  <circle cx="208" cy="470" r="11" fill="#8ed8ff" stroke="#ffffff" stroke-width="3"/>
+
+                  <circle cx="485" cy="395" r="22" fill="#6ea8ff" fill-opacity="0.16" filter="url(#glow)"/>
+                  <circle cx="485" cy="395" r="11" fill="#8ed8ff" stroke="#ffffff" stroke-width="3"/>
+
+                  <circle cx="728" cy="390" r="22" fill="#6ea8ff" fill-opacity="0.16" filter="url(#glow)"/>
+                  <circle cx="728" cy="390" r="11" fill="#8ed8ff" stroke="#ffffff" stroke-width="3"/>
+
+                  <circle cx="688" cy="205" r="22" fill="#6ea8ff" fill-opacity="0.16" filter="url(#glow)"/>
+                  <circle cx="688" cy="205" r="11" fill="#8ed8ff" stroke="#ffffff" stroke-width="3"/>
+                </g>
+              </svg>
             </div>
 
             <article class="intel-card">
@@ -1155,22 +1113,6 @@
       });
     });
 
-    const mapZone = document.getElementById('mapZone');
-    const mapRisk = document.getElementById('mapRisk');
-    const mapAction = document.getElementById('mapAction');
-    const mapStatus = document.getElementById('mapStatus');
-    const mapActivity = document.getElementById('mapActivity');
-
-    document.querySelectorAll('.map-point').forEach(point => {
-      point.addEventListener('click', () => {
-        mapZone.textContent = point.dataset.zone;
-        mapRisk.textContent = point.dataset.risk;
-        mapAction.textContent = point.dataset.action;
-        mapStatus.textContent = point.dataset.status;
-        mapActivity.textContent = point.dataset.activity;
-      });
-    });
-
     const capCards = document.querySelectorAll('.cap-card');
     const capTitle = document.getElementById('capTitle');
     const capDesc = document.getElementById('capDesc');
@@ -1268,7 +1210,7 @@
       scannerScreen.textContent = scannerStates
         .slice(scannerPointer)
         .concat(scannerStates.slice(0, scannerPointer))
-        .join('\n');
+        .join('\\n');
       scannerPointer = (scannerPointer + 1) % scannerStates.length;
     }
 
@@ -1306,7 +1248,7 @@
 
     const bootTimer = setInterval(() => {
       if (bootIndex < bootLines.length) {
-        bootStatus.textContent += `> ${bootLines[bootIndex]}\n`;
+        bootStatus.textContent += `> ${bootLines[bootIndex]}\\n`;
         bootIndex += 1;
       } else {
         clearInterval(bootTimer);
